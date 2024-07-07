@@ -3,27 +3,21 @@ import {
   removeCartItem,
   updateDeliveryOptionId,
 } from "../../data/cart.js";
-import { products } from "../../data/products.js";
+import { products, getProducts } from "../../data/products.js";
 import { formatCurrency } from "../utils/money.js";
 import dayjs from "https://unpkg.com/dayjs@1.11.10/esm/index.js";
-import { deliveryOptions } from "../../data/deliveryOptions.js";
+import {
+  deliveryOptions,
+  getDeliveryOption,
+} from "../../data/deliveryOptions.js";
 
-export function renderorderSummary() {
+export function renderOrderSummary() {
   let cartHTML = "";
 
   cart.forEach((cartItem) => {
-    let matchingItem;
-    products.forEach((product) => {
-      if (cartItem.id === product.id) matchingItem = product;
-    });
-
+    const matchingItem = getProducts(cartItem.id);
     const deliveryOptionId = cartItem.deliveryOptionId;
-    let deliveryOption;
-    deliveryOptions.forEach((option) => {
-      if (option.id === deliveryOptionId) {
-        deliveryOption = option;
-      }
-    });
+    const deliveryOption = getDeliveryOption(deliveryOptionId);
 
     const today = dayjs();
     const deliveryDate = today
@@ -126,7 +120,7 @@ export function renderorderSummary() {
     element.addEventListener("click", () => {
       const { productId, deliveryOptionId } = element.dataset;
       updateDeliveryOptionId(productId, deliveryOptionId);
-      renderorderSummary();
+      renderOrderSummary();
     });
   });
 }
